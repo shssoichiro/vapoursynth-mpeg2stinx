@@ -1,3 +1,5 @@
 mod nnedi3;
+mod yadifmod;
 
-pub use nnedi3::*;
+pub(crate) use nnedi3::*;
+pub(crate) use yadifmod::*;

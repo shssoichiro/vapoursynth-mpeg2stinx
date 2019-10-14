@@ -6,7 +6,7 @@ use vapoursynth::prelude::*;
 
 const STD_NAMESPACE: &str = "com.vapoursynth.std";
 
-pub fn separate_rows<'core>(
+pub(crate) fn separate_rows<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -35,7 +35,7 @@ pub fn separate_rows<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn weave_rows<'core>(
+pub(crate) fn weave_rows<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -57,7 +57,7 @@ pub fn weave_rows<'core>(
     select_even(core, api, clip)
 }
 
-pub fn blur_v<'core>(
+pub(crate) fn blur_v<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -79,7 +79,7 @@ pub fn blur_v<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn select_even<'core>(
+pub(crate) fn select_even<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -87,7 +87,7 @@ pub fn select_even<'core>(
     select_every(core, api, clip, 2, &[0])
 }
 
-pub fn select_odd<'core>(
+pub(crate) fn select_odd<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -95,7 +95,7 @@ pub fn select_odd<'core>(
     select_every(core, api, clip, 2, &[1])
 }
 
-pub fn select_every<'core>(
+pub(crate) fn select_every<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -118,7 +118,7 @@ pub fn select_every<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn interleave<'core>(
+pub(crate) fn interleave<'core>(
     core: CoreRef<'core>,
     api: API,
     clips: &[FrameRef<'core>],
@@ -139,7 +139,7 @@ pub fn interleave<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn shuffle_planes<'core>(
+pub(crate) fn shuffle_planes<'core>(
     core: CoreRef<'core>,
     api: API,
     clips: &[FrameRef<'core>],
@@ -164,7 +164,7 @@ pub fn shuffle_planes<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn expand<'core>(
+pub(crate) fn expand<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -192,7 +192,7 @@ pub fn expand<'core>(
     result.get_frame("clip").map_err(Error::from)
 }
 
-pub fn inpand<'core>(
+pub(crate) fn inpand<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,

@@ -3,7 +3,7 @@ use failure::Error;
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
-pub fn u_to_y8<'core>(
+pub(crate) fn u_to_y8<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
@@ -16,7 +16,7 @@ pub fn u_to_y8<'core>(
     )
 }
 
-pub fn v_to_y8<'core>(
+pub(crate) fn v_to_y8<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
@@ -31,7 +31,7 @@ pub fn v_to_y8<'core>(
 
 /// max of the Y/U/V planes, resizing if necessary
 #[allow(clippy::many_single_char_names)]
-pub fn max_yuv<'core>(
+pub(crate) fn max_yuv<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
@@ -52,7 +52,7 @@ pub fn max_yuv<'core>(
     shuffle_planes(core, api, &[ls, cs, cs], &[0, 0, 0], ColorFamily::YUV)
 }
 
-pub fn median3<'core>(
+pub(crate) fn median3<'core>(
     core: CoreRef<'core>,
     api: API,
     current: FrameRef<'core>,
@@ -64,7 +64,7 @@ pub fn median3<'core>(
     clense(core, api, current, previous, next, planes)
 }
 
-pub fn temp_limit<'core>(
+pub(crate) fn temp_limit<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -112,7 +112,7 @@ pub enum ExpandMode {
 }
 
 impl ExpandMode {
-    pub fn to_coords(self) -> [i64; 8] {
+    pub(crate) fn to_coords(self) -> [i64; 8] {
         match self {
             ExpandMode::Square => [1, 1, 1, 1, 1, 1, 1, 1],
             ExpandMode::Horizontal => [0, 0, 0, 1, 1, 0, 0, 0],
@@ -122,7 +122,7 @@ impl ExpandMode {
     }
 }
 
-pub fn expand_multi<'core>(
+pub(crate) fn expand_multi<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -152,7 +152,7 @@ pub fn expand_multi<'core>(
     )
 }
 
-pub fn inpand_multi<'core>(
+pub(crate) fn inpand_multi<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: FrameRef<'core>,
@@ -182,7 +182,7 @@ pub fn inpand_multi<'core>(
     )
 }
 
-pub fn min<'core>(
+pub(crate) fn min<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -240,7 +240,7 @@ min_fn!(u8);
 min_fn!(u16);
 min_fn!(u32);
 
-pub fn max<'core>(
+pub(crate) fn max<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -299,7 +299,7 @@ max_fn!(u16);
 max_fn!(u32);
 
 #[inline(always)]
-pub fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
+pub(crate) fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     if input < min {
         min
     } else if input > max {

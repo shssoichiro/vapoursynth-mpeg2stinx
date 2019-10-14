@@ -5,7 +5,7 @@ use vapoursynth::prelude::*;
 
 const MISC_NAMESPACE: &str = "com.vapoursynth.misc";
 
-pub fn average_frames<'core>(
+pub(crate) fn average_frames<'core>(
     core: CoreRef<'core>,
     api: API,
     clips: &[FrameRef<'core>],

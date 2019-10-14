@@ -3,7 +3,7 @@ mod resize;
 mod rgvs;
 mod std;
 
-pub use self::misc::*;
-pub use self::resize::*;
-pub use self::rgvs::*;
-pub use self::std::*;
+pub(crate) use self::misc::*;
+pub(crate) use self::resize::*;
+pub(crate) use self::rgvs::*;
+pub(crate) use self::std::*;

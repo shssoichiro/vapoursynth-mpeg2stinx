@@ -5,7 +5,7 @@ use vapoursynth::prelude::*;
 
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x x y - "+string(sstr)+" * +",y=3,u=3,v=3)`
-pub fn lutxy_sharp<'core>(
+pub(crate) fn lutxy_sharp<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -75,7 +75,7 @@ sharp_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - "+string(sstr)+" * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
-pub fn lutxy_sharpd<'core>(
+pub(crate) fn lutxy_sharpd<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -146,7 +146,7 @@ sharpd_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x 128 - y 128 - * 0 < "+string(scl)+" 1 ? x 128 - abs y 128 - abs < x y ? 128 - * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
-pub fn lutxy_limd<'core>(
+pub(crate) fn lutxy_limd<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -219,7 +219,7 @@ limd_fn!(u32, i64);
 
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - abs",y=3,u=3,v=3)`
-pub fn lutxy_diff<'core>(
+pub(crate) fn lutxy_diff<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -284,7 +284,7 @@ diff_fn!(u32, i64);
 
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - 128 +",y=3,u=3,v=3)`
-pub fn make_diff<'core>(
+pub(crate) fn make_diff<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -335,7 +335,7 @@ macro_rules! make_diff_fn {
                     )
                 {
                     *target = clamp(
-                        (x as $math_ty - y as $math_ty) + 128,
+                        (x as $math_ty - y as $math_ty) + half_val,
                         0, max_pix_val
                     ) as $pix_ty;
                 }
@@ -350,7 +350,7 @@ make_diff_fn!(u32, i64);
 
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y + 128 -",y=3,u=3,v=3)`
-pub fn add_diff<'core>(
+pub(crate) fn add_diff<'core>(
     core: CoreRef<'core>,
     clip1: FrameRef<'core>,
     clip2: FrameRef<'core>,
@@ -401,7 +401,7 @@ macro_rules! add_diff_fn {
                     )
                 {
                     *target = clamp(
-                        (x as $math_ty + y as $math_ty) - 128,
+                        (x as $math_ty + y as $math_ty) - half_val,
                         0, max_pix_val
                     ) as $pix_ty;
                 }

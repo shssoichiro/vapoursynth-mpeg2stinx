@@ -8,6 +8,7 @@ TODO
 
 - For `mode = 2`: [nnedi3](https://github.com/dubhater/vapoursynth-nnedi3)
 - For `mode = 3`: [nnedi3cl](https://github.com/HomeOfVapourSynthEvolution/VapourSynth-NNEDI3CL)
+- For `order != -1`: [yadifmod](https://github.com/HomeOfVapourSynthEvolution/VapourSynth-Yadifmod)
 
 ## Usage
 

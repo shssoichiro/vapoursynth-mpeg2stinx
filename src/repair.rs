@@ -3,7 +3,7 @@ use failure::Error;
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
-pub fn cross_field_repair2<'core>(
+pub(crate) fn cross_field_repair2<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
@@ -19,7 +19,7 @@ pub fn cross_field_repair2<'core>(
     let bobbed_ex = expand_multi(core, api, bobbed, sw, sh, process_chroma)?;
     let bobbed_in = inpand_multi(core, api, bobbed, sw, sh, process_chroma)?;
     let re = if sw == 1 && sh == 1 {
-        repair(src, select_even(core, api, bobbed)?, 1)?
+        repair(core, api, src, select_even(core, api, bobbed)?, 1)?
     } else {
         median3(
             core,
@@ -31,7 +31,7 @@ pub fn cross_field_repair2<'core>(
         )?
     };
     let ro = if sw == 1 && sh == 1 {
-        repair(src, select_odd(core, api, bobbed)?, 1)?
+        repair(core, api, src, select_odd(core, api, bobbed)?, 1)?
     } else {
         median3(
             core,

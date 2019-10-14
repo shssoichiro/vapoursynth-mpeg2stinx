@@ -182,14 +182,15 @@ impl<'core> Mpeg2Stinx<'core> {
                 yadifmod(
                     core,
                     api,
+                    src,
+                    select_every(core, api, bobbed, 2, &[1, 0])?,
                     0,
                     3,
-                    select_every(core, api, bobbed, 2, &[1, 0])?,
                 )?,
                 2,
                 &[1, 0],
             )?,
-            1 => yadifmod(core, api, 1, 3, bobbed)?,
+            1 => yadifmod(core, api, src, bobbed, 1, 3)?,
             _ => unreachable!(),
         })
     }
