@@ -216,3 +216,68 @@ macro_rules! limd_fn {
 limd_fn!(u8, i32);
 limd_fn!(u16, i64);
 limd_fn!(u32, i64);
+
+// Equivalent AVS:
+// `mt_lutxy(x,y,expr="x y - abs",y=3,u=3,v=3)`
+pub fn lutxy_diff<'core>(
+    core: CoreRef<'core>,
+    clip1: FrameRef<'core>,
+    clip2: FrameRef<'core>,
+) -> Result<FrameRef<'core>, Error> {
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+
+    // Assume formats are equivalent, because this is an internal function
+    let plane_count = clip1.format().plane_count();
+    let bytes_per_sample = clip1.format().bytesPerSample;
+    for plane in 0..plane_count {
+        match bytes_per_sample {
+            1 => diff_loop_u8(clip1, clip2, filtered, plane)?,
+            2 => diff_loop_u16(clip1, clip2, filtered, plane)?,
+            4 => diff_loop_u32(clip1, clip2, filtered, plane)?,
+            _ => unreachable!(),
+        }
+    }
+    Ok(FrameRef::from(filtered))
+}
+
+macro_rules! diff_fn {
+    ($pix_ty:ty, $math_ty:ty) => {
+        paste::item! {
+            fn [<diff_loop_ $pix_ty>]<'core>(
+                clip1: FrameRef<'core>,
+                clip2: FrameRef<'core>,
+                filtered: FrameRefMut<'core>,
+                plane: usize,
+            ) -> Result<(), Error> {
+                let bit_depth = clip1.format().bitsPerSample;
+                let max_pix_val = (1 << bit_depth) - 1;
+                for ((&x, &y), target) in clip1
+                    .plane::<$pix_ty>(plane)
+                    .map_err(Error::from)?
+                    .into_iter()
+                    .zip(
+                        clip2
+                            .plane::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .into_iter(),
+                    )
+                    .zip(
+                        filtered
+                            .plane_mut::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .iter_mut(),
+                    )
+                {
+                    *target = clamp(
+                        (x as $math_ty - y as $math_ty).abs(),
+                        0, max_pix_val
+                    ) as $pix_ty;
+                }
+                Ok(())
+            }
+        }
+    };
+}
+diff_fn!(u8, i16);
+diff_fn!(u16, i32);
+diff_fn!(u32, i64);

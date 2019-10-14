@@ -2,12 +2,14 @@
 
 mod deint;
 mod lutxy;
+mod repair;
 mod third_party;
 mod util;
 mod vsfunc;
 
 use self::deint::*;
 use self::lutxy::*;
+use self::repair::*;
 use self::third_party::*;
 use self::util::*;
 use self::vsfunc::*;
@@ -72,24 +74,38 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             .ok_or_else(|| format_err!("MPEG2Stinx: Couldn't get the source frame"))?;
 
         let a = cross_field_repair2(
+            core,
+            api,
             src,
-            self.deint(core, api, src)
-                .map_err(|e| e.context("MPEG2Stinx"))?,
+            Some(
+                self.deint(core, api, src)
+                    .map_err(|e| e.context("MPEG2Stinx"))?,
+            ),
+            self.sw,
+            self.sh,
+            true,
         )
         .map_err(|e| e.context("MPEG2Stinx"))?;
         let a = if let Some(diffscl) = self.diffscl {
-            temp_limit(src, a, src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, src, a, src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
         } else {
             a
         };
         let b = cross_field_repair2(
+            core,
+            api,
             a,
-            self.deint(core, api, a)
-                .map_err(|e| e.context("MPEG2Stinx"))?,
+            Some(
+                self.deint(core, api, a)
+                    .map_err(|e| e.context("MPEG2Stinx"))?,
+            ),
+            self.sw,
+            self.sh,
+            true,
         )
         .map_err(|e| e.context("MPEG2Stinx"))?;
         let b = if let Some(diffscl) = self.diffscl {
-            temp_limit(a, b, src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, a, b, src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
         } else {
             b
         };
@@ -112,17 +128,23 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             api,
             blur_v(core, api, nuked, &self.blurv_kernels[1])?,
             &self.blurv_kernels[1],
-        )?;
-        let sharp = lutxy_sharp(core, nuked, nuked_blurred, self.sstr)?;
+        )
+        .map_err(|e| e.context("MPEG2Stinx"))?;
+        let sharp = lutxy_sharp(core, nuked, nuked_blurred, self.sstr)
+            .map_err(|e| e.context("MPEG2Stinx"))?;
 
         if self.scl == 0.0 {
-            return median3(nuked, sharp, src);
+            return Ok(
+                median3(core, api, nuked, sharp, src, true).map_err(|e| e.context("MPEG2Stinx"))?
+            );
         }
 
         let nukedd = mt_makediff(src, nuked).map_err(|e| e.context("MPEG2Stinx"))?;
-        let sharpd = lutxy_sharpd(core, nuked, nuked_blurred, self.sstr)?;
-        let limd = lutxy_limd(core, sharpd, nukedd, self.scl)?;
-        mt_adddiff(nuked, limd)
+        let sharpd = lutxy_sharpd(core, nuked, nuked_blurred, self.sstr)
+            .map_err(|e| e.context("MPEG2Stinx"))?;
+        let limd =
+            lutxy_limd(core, sharpd, nukedd, self.scl).map_err(|e| e.context("MPEG2Stinx"))?;
+        Ok(mt_adddiff(nuked, limd).map_err(|e| e.context("MPEG2Stinx"))?)
     }
 }
 
@@ -183,7 +205,7 @@ impl<'core> Mpeg2Stinx<'core> {
             // dither_post(r_average_w(a, 0.5, b, 0.5, true)?, 7)
             unimplemented!()
         } else {
-            average_frames(core, api, &[a, b])
+            average_frames(core, api, &[a, b], None)
         }
     }
 }

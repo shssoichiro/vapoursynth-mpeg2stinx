@@ -48,7 +48,7 @@ impl FilterMode {
     }
 }
 
-fn point_bob<'core>(
+pub fn point_bob<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
@@ -63,7 +63,7 @@ fn point_bob<'core>(
     )
 }
 
-fn spline36_bob<'core>(
+pub fn spline36_bob<'core>(
     core: CoreRef<'core>,
     api: API,
     src: FrameRef<'core>,
