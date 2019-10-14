@@ -1,0 +1,16 @@
+[package]
+name = "vapoursynth-mpeg2stinx"
+version = "0.1.0"
+authors = ["Josh Holmer <jholmer.in@gmail.com>"]
+edition = "2018"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+vapoursynth = { version = "0.2.0", features = ["vapoursynth-api-35"] }
+failure = "0.1.6"
+paste = "0.1.6"
+
+[lib]
+crate-type = ["cdylib"]
