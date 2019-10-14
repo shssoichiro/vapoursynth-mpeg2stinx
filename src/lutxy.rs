@@ -204,7 +204,7 @@ macro_rules! limd_fn {
                         half_val + (
                             ((if (x - half_val).abs() < (y - half_val).abs() { x } else { y }) - half_val) as f32
                             * (if (x - half_val) * (y - half_val) < 0 { scale } else { 1.0 })
-                        ) as $math_ty
+                        ) as $math_ty,
                         0, max_pix_val
                     ) as $pix_ty;
                 }
@@ -281,3 +281,135 @@ macro_rules! diff_fn {
 diff_fn!(u8, i16);
 diff_fn!(u16, i32);
 diff_fn!(u32, i64);
+
+// Equivalent AVS:
+// `mt_lutxy(x,y,expr="x y - 128 +",y=3,u=3,v=3)`
+pub fn make_diff<'core>(
+    core: CoreRef<'core>,
+    clip1: FrameRef<'core>,
+    clip2: FrameRef<'core>,
+) -> Result<FrameRef<'core>, Error> {
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+
+    // Assume formats are equivalent, because this is an internal function
+    let plane_count = clip1.format().plane_count();
+    let bytes_per_sample = clip1.format().bytesPerSample;
+    for plane in 0..plane_count {
+        match bytes_per_sample {
+            1 => make_diff_loop_u8(clip1, clip2, filtered, plane)?,
+            2 => make_diff_loop_u16(clip1, clip2, filtered, plane)?,
+            4 => make_diff_loop_u32(clip1, clip2, filtered, plane)?,
+            _ => unreachable!(),
+        }
+    }
+    Ok(FrameRef::from(filtered))
+}
+
+macro_rules! make_diff_fn {
+    ($pix_ty:ty, $math_ty:ty) => {
+        paste::item! {
+            fn [<make_diff_loop_ $pix_ty>]<'core>(
+                clip1: FrameRef<'core>,
+                clip2: FrameRef<'core>,
+                filtered: FrameRefMut<'core>,
+                plane: usize,
+            ) -> Result<(), Error> {
+                let bit_depth = clip1.format().bitsPerSample;
+                let max_pix_val = (1 << bit_depth) - 1;
+                let half_val = 1 << (bit_depth / 2);
+                for ((&x, &y), target) in clip1
+                    .plane::<$pix_ty>(plane)
+                    .map_err(Error::from)?
+                    .into_iter()
+                    .zip(
+                        clip2
+                            .plane::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .into_iter(),
+                    )
+                    .zip(
+                        filtered
+                            .plane_mut::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .iter_mut(),
+                    )
+                {
+                    *target = clamp(
+                        (x as $math_ty - y as $math_ty) + 128,
+                        0, max_pix_val
+                    ) as $pix_ty;
+                }
+                Ok(())
+            }
+        }
+    };
+}
+make_diff_fn!(u8, i16);
+make_diff_fn!(u16, i32);
+make_diff_fn!(u32, i64);
+
+// Equivalent AVS:
+// `mt_lutxy(x,y,expr="x y + 128 -",y=3,u=3,v=3)`
+pub fn add_diff<'core>(
+    core: CoreRef<'core>,
+    clip1: FrameRef<'core>,
+    clip2: FrameRef<'core>,
+) -> Result<FrameRef<'core>, Error> {
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+
+    // Assume formats are equivalent, because this is an internal function
+    let plane_count = clip1.format().plane_count();
+    let bytes_per_sample = clip1.format().bytesPerSample;
+    for plane in 0..plane_count {
+        match bytes_per_sample {
+            1 => add_diff_loop_u8(clip1, clip2, filtered, plane)?,
+            2 => add_diff_loop_u16(clip1, clip2, filtered, plane)?,
+            4 => add_diff_loop_u32(clip1, clip2, filtered, plane)?,
+            _ => unreachable!(),
+        }
+    }
+    Ok(FrameRef::from(filtered))
+}
+
+macro_rules! add_diff_fn {
+    ($pix_ty:ty, $math_ty:ty) => {
+        paste::item! {
+            fn [<add_diff_loop_ $pix_ty>]<'core>(
+                clip1: FrameRef<'core>,
+                clip2: FrameRef<'core>,
+                filtered: FrameRefMut<'core>,
+                plane: usize,
+            ) -> Result<(), Error> {
+                let bit_depth = clip1.format().bitsPerSample;
+                let max_pix_val = (1 << bit_depth) - 1;
+                let half_val = 1 << (bit_depth / 2);
+                for ((&x, &y), target) in clip1
+                    .plane::<$pix_ty>(plane)
+                    .map_err(Error::from)?
+                    .into_iter()
+                    .zip(
+                        clip2
+                            .plane::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .into_iter(),
+                    )
+                    .zip(
+                        filtered
+                            .plane_mut::<$pix_ty>(plane)
+                            .map_err(Error::from)?
+                            .iter_mut(),
+                    )
+                {
+                    *target = clamp(
+                        (x as $math_ty + y as $math_ty) - 128,
+                        0, max_pix_val
+                    ) as $pix_ty;
+                }
+                Ok(())
+            }
+        }
+    };
+}
+add_diff_fn!(u8, i16);
+add_diff_fn!(u16, i32);
+add_diff_fn!(u32, i64);

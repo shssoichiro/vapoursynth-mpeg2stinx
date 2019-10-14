@@ -139,12 +139,12 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             );
         }
 
-        let nukedd = mt_makediff(src, nuked).map_err(|e| e.context("MPEG2Stinx"))?;
+        let nukedd = make_diff(core, src, nuked).map_err(|e| e.context("MPEG2Stinx"))?;
         let sharpd = lutxy_sharpd(core, nuked, nuked_blurred, self.sstr)
             .map_err(|e| e.context("MPEG2Stinx"))?;
         let limd =
             lutxy_limd(core, sharpd, nukedd, self.scl).map_err(|e| e.context("MPEG2Stinx"))?;
-        Ok(mt_adddiff(nuked, limd).map_err(|e| e.context("MPEG2Stinx"))?)
+        Ok(add_diff(core, nuked, limd).map_err(|e| e.context("MPEG2Stinx"))?)
     }
 }
 

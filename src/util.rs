@@ -30,6 +30,7 @@ pub fn v_to_y8<'core>(
 }
 
 /// max of the Y/U/V planes, resizing if necessary
+#[allow(clippy::many_single_char_names)]
 pub fn max_yuv<'core>(
     core: CoreRef<'core>,
     api: API,
@@ -94,6 +95,7 @@ pub fn temp_limit<'core>(
             )?,
             2,
             1,
+            true,
         )?,
     )?;
     let a = average_frames(core, api, &[clip, diff2], Some(&[1.0, -diffscl]))?;
