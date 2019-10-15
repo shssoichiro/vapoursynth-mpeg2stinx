@@ -6,9 +6,9 @@ use vapoursynth::prelude::*;
 const RESIZE_NAMESPACE: &str = "com.vapoursynth.resize";
 
 pub(crate) fn point_resize<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     width: i64,
     height: i64,
 ) -> Result<FrameRef<'core>, Error> {
@@ -29,9 +29,9 @@ pub(crate) fn point_resize<'core>(
 }
 
 pub(crate) fn bilinear_resize<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     width: i64,
     height: i64,
 ) -> Result<FrameRef<'core>, Error> {
@@ -52,9 +52,9 @@ pub(crate) fn bilinear_resize<'core>(
 }
 
 pub(crate) fn spline36_resize<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     width: i64,
     height: i64,
 ) -> Result<FrameRef<'core>, Error> {
@@ -75,9 +75,9 @@ pub(crate) fn spline36_resize<'core>(
 }
 
 pub(crate) fn spline36_resize_crop<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     width: i64,
     height: i64,
     src_left: f64,
@@ -106,9 +106,9 @@ pub(crate) fn spline36_resize_crop<'core>(
 }
 
 pub(crate) fn convert<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     format: PresetFormat,
 ) -> Result<FrameRef<'core>, Error> {
     let resize = core

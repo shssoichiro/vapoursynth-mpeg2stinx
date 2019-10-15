@@ -7,9 +7,9 @@ const NNEDI3_NAMESPACE: &str = "com.deinterlace.nnedi3";
 const NNEDI3CL_NAMESPACE: &str = "com.holywu.nnedi3cl";
 
 pub(crate) fn nnedi3<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     field: i64,
     opencl: bool,
 ) -> Result<FrameRef<'core>, Error> {

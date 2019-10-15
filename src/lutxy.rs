@@ -6,21 +6,21 @@ use vapoursynth::prelude::*;
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x x y - "+string(sstr)+" * +",y=3,u=3,v=3)`
 pub(crate) fn lutxy_sharp<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
     strength: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => sharp_loop_u8(clip1, clip2, filtered, plane, strength)?,
-            2 => sharp_loop_u16(clip1, clip2, filtered, plane, strength)?,
-            4 => sharp_loop_u32(clip1, clip2, filtered, plane, strength)?,
+            1 => sharp_loop_u8(clip1, clip2, &mut filtered, plane, strength)?,
+            2 => sharp_loop_u16(clip1, clip2, &mut filtered, plane, strength)?,
+            4 => sharp_loop_u32(clip1, clip2, &mut filtered, plane, strength)?,
             _ => unreachable!(),
         }
     }
@@ -31,9 +31,9 @@ macro_rules! sharp_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<sharp_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
                 strength: f32,
             ) -> Result<(), Error> {
@@ -76,21 +76,21 @@ sharp_fn!(u32, i64);
 // `mt_lutxy(x,y,expr="x y - "+string(sstr)+" * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
 pub(crate) fn lutxy_sharpd<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
     strength: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => sharpd_loop_u8(clip1, clip2, filtered, plane, strength)?,
-            2 => sharpd_loop_u16(clip1, clip2, filtered, plane, strength)?,
-            4 => sharpd_loop_u32(clip1, clip2, filtered, plane, strength)?,
+            1 => sharpd_loop_u8(clip1, clip2, &mut filtered, plane, strength)?,
+            2 => sharpd_loop_u16(clip1, clip2, &mut filtered, plane, strength)?,
+            4 => sharpd_loop_u32(clip1, clip2, &mut filtered, plane, strength)?,
             _ => unreachable!(),
         }
     }
@@ -101,9 +101,9 @@ macro_rules! sharpd_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<sharpd_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
                 strength: f32,
             ) -> Result<(), Error> {
@@ -147,21 +147,21 @@ sharpd_fn!(u32, i64);
 // `mt_lutxy(x,y,expr="x 128 - y 128 - * 0 < "+string(scl)+" 1 ? x 128 - abs y 128 - abs < x y ? 128 - * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
 pub(crate) fn lutxy_limd<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
     scale: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => limd_loop_u8(clip1, clip2, filtered, plane, scale)?,
-            2 => limd_loop_u16(clip1, clip2, filtered, plane, scale)?,
-            4 => limd_loop_u32(clip1, clip2, filtered, plane, scale)?,
+            1 => limd_loop_u8(clip1, clip2, &mut filtered, plane, scale)?,
+            2 => limd_loop_u16(clip1, clip2, &mut filtered, plane, scale)?,
+            4 => limd_loop_u32(clip1, clip2, &mut filtered, plane, scale)?,
             _ => unreachable!(),
         }
     }
@@ -172,9 +172,9 @@ macro_rules! limd_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<limd_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
                 scale: f32,
             ) -> Result<(), Error> {
@@ -220,20 +220,20 @@ limd_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - abs",y=3,u=3,v=3)`
 pub(crate) fn lutxy_diff<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => diff_loop_u8(clip1, clip2, filtered, plane)?,
-            2 => diff_loop_u16(clip1, clip2, filtered, plane)?,
-            4 => diff_loop_u32(clip1, clip2, filtered, plane)?,
+            1 => diff_loop_u8(clip1, clip2, &mut filtered, plane)?,
+            2 => diff_loop_u16(clip1, clip2, &mut filtered, plane)?,
+            4 => diff_loop_u32(clip1, clip2, &mut filtered, plane)?,
             _ => unreachable!(),
         }
     }
@@ -244,9 +244,9 @@ macro_rules! diff_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<diff_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
             ) -> Result<(), Error> {
                 let bit_depth = clip1.format().bitsPerSample;
@@ -285,20 +285,20 @@ diff_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - 128 +",y=3,u=3,v=3)`
 pub(crate) fn make_diff<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => make_diff_loop_u8(clip1, clip2, filtered, plane)?,
-            2 => make_diff_loop_u16(clip1, clip2, filtered, plane)?,
-            4 => make_diff_loop_u32(clip1, clip2, filtered, plane)?,
+            1 => make_diff_loop_u8(clip1, clip2, &mut filtered, plane)?,
+            2 => make_diff_loop_u16(clip1, clip2, &mut filtered, plane)?,
+            4 => make_diff_loop_u32(clip1, clip2, &mut filtered, plane)?,
             _ => unreachable!(),
         }
     }
@@ -309,9 +309,9 @@ macro_rules! make_diff_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<make_diff_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
             ) -> Result<(), Error> {
                 let bit_depth = clip1.format().bitsPerSample;
@@ -351,20 +351,20 @@ make_diff_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y + 128 -",y=3,u=3,v=3)`
 pub(crate) fn add_diff<'core>(
-    core: CoreRef<'core>,
-    clip1: FrameRef<'core>,
-    clip2: FrameRef<'core>,
+    core: &'core CoreRef<'core>,
+    clip1: &FrameRef<'core>,
+    clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
     let bytes_per_sample = clip1.format().bytesPerSample;
     for plane in 0..plane_count {
         match bytes_per_sample {
-            1 => add_diff_loop_u8(clip1, clip2, filtered, plane)?,
-            2 => add_diff_loop_u16(clip1, clip2, filtered, plane)?,
-            4 => add_diff_loop_u32(clip1, clip2, filtered, plane)?,
+            1 => add_diff_loop_u8(clip1, clip2, &mut filtered, plane)?,
+            2 => add_diff_loop_u16(clip1, clip2, &mut filtered, plane)?,
+            4 => add_diff_loop_u32(clip1, clip2, &mut filtered, plane)?,
             _ => unreachable!(),
         }
     }
@@ -375,9 +375,9 @@ macro_rules! add_diff_fn {
     ($pix_ty:ty, $math_ty:ty) => {
         paste::item! {
             fn [<add_diff_loop_ $pix_ty>]<'core>(
-                clip1: FrameRef<'core>,
-                clip2: FrameRef<'core>,
-                filtered: FrameRefMut<'core>,
+                clip1: &FrameRef<'core>,
+                clip2: &FrameRef<'core>,
+                filtered: &mut FrameRefMut<'core>,
                 plane: usize,
             ) -> Result<(), Error> {
                 let bit_depth = clip1.format().bitsPerSample;

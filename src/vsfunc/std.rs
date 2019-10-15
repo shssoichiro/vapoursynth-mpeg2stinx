@@ -7,9 +7,9 @@ use vapoursynth::prelude::*;
 const STD_NAMESPACE: &str = "com.vapoursynth.std";
 
 pub(crate) fn separate_rows<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
@@ -36,9 +36,9 @@ pub(crate) fn separate_rows<'core>(
 }
 
 pub(crate) fn weave_rows<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
@@ -54,13 +54,13 @@ pub(crate) fn weave_rows<'core>(
     }
     let clip = result.get_frame("clip").map_err(Error::from)?;
 
-    select_even(core, api, clip)
+    select_even(core, api, &clip)
 }
 
 pub(crate) fn blur_v<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     kernel: &[i64],
 ) -> Result<FrameRef<'core>, Error> {
     let std = core
@@ -80,25 +80,25 @@ pub(crate) fn blur_v<'core>(
 }
 
 pub(crate) fn select_even<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
     select_every(core, api, clip, 2, &[0])
 }
 
 pub(crate) fn select_odd<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
     select_every(core, api, clip, 2, &[1])
 }
 
 pub(crate) fn select_every<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     cycle: i64,
     offsets: &[i64],
 ) -> Result<FrameRef<'core>, Error> {
@@ -119,9 +119,9 @@ pub(crate) fn select_every<'core>(
 }
 
 pub(crate) fn interleave<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clips: &[FrameRef<'core>],
+    clips: &[&FrameRef<'core>],
 ) -> Result<FrameRef<'core>, Error> {
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
@@ -140,9 +140,9 @@ pub(crate) fn interleave<'core>(
 }
 
 pub(crate) fn shuffle_planes<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clips: &[FrameRef<'core>],
+    clips: &[&FrameRef<'core>],
     planes: &[i64],
     color_family: ColorFamily,
 ) -> Result<FrameRef<'core>, Error> {
@@ -165,14 +165,14 @@ pub(crate) fn shuffle_planes<'core>(
 }
 
 pub(crate) fn expand<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     mode: ExpandMode,
     process_chroma: bool,
 ) -> Result<FrameRef<'core>, Error> {
     if mode == ExpandMode::None {
-        return Ok(clip);
+        return Ok(clip.clone());
     }
 
     let std = core
@@ -193,14 +193,14 @@ pub(crate) fn expand<'core>(
 }
 
 pub(crate) fn inpand<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
     mode: ExpandMode,
     process_chroma: bool,
 ) -> Result<FrameRef<'core>, Error> {
     if mode == ExpandMode::None {
-        return Ok(clip);
+        return Ok(clip.clone());
     }
 
     let std = core

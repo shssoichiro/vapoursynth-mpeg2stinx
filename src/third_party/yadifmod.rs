@@ -6,10 +6,10 @@ use vapoursynth::prelude::*;
 const YADIFMOD_NAMESPACE: &str = "com.holywu.yadifmod";
 
 pub(crate) fn yadifmod<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
-    edeint: FrameRef<'core>,
+    clip: &FrameRef<'core>,
+    edeint: &FrameRef<'core>,
     order: i64,
     mode: i64,
 ) -> Result<FrameRef<'core>, Error> {

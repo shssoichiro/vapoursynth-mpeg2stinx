@@ -6,11 +6,11 @@ use vapoursynth::prelude::*;
 const RGVS_NAMESPACE: &str = "com.vapoursynth.rgvs";
 
 pub(crate) fn clense<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
-    previous: FrameRef<'core>,
-    next: FrameRef<'core>,
+    clip: &FrameRef<'core>,
+    previous: &FrameRef<'core>,
+    next: &FrameRef<'core>,
     planes: &[i64],
 ) -> Result<FrameRef<'core>, Error> {
     let rgvs = core
@@ -31,10 +31,10 @@ pub(crate) fn clense<'core>(
 }
 
 pub(crate) fn repair<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clip: FrameRef<'core>,
-    repair_clip: FrameRef<'core>,
+    clip: &FrameRef<'core>,
+    repair_clip: &FrameRef<'core>,
     mode: i64,
 ) -> Result<FrameRef<'core>, Error> {
     let rgvs = core

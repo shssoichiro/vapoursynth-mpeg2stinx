@@ -6,9 +6,9 @@ use vapoursynth::prelude::*;
 const MISC_NAMESPACE: &str = "com.vapoursynth.misc";
 
 pub(crate) fn average_frames<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    clips: &[FrameRef<'core>],
+    clips: &[&FrameRef<'core>],
     weights: Option<&[f64]>,
 ) -> Result<FrameRef<'core>, Error> {
     let misc = core

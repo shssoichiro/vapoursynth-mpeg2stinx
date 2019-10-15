@@ -35,9 +35,9 @@ impl TryFrom<i64> for FilterMode {
 impl FilterMode {
     pub(crate) fn deint<'core>(
         self,
-        core: CoreRef<'core>,
+        core: &'core CoreRef<'core>,
         api: API,
-        src: FrameRef<'core>,
+        src: &FrameRef<'core>,
     ) -> Result<FrameRef<'core>, Error> {
         match self {
             FilterMode::PointBob => point_bob(core, api, src),
@@ -49,32 +49,32 @@ impl FilterMode {
 }
 
 pub(crate) fn point_bob<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    src: FrameRef<'core>,
+    src: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
     let clip = separate_rows(core, api, src)?;
     point_resize(
         core,
         api,
-        clip,
+        &clip,
         clip.width(0) as i64,
         2 * clip.height(0) as i64,
     )
 }
 
 pub(crate) fn spline36_bob<'core>(
-    core: CoreRef<'core>,
+    core: &'core CoreRef<'core>,
     api: API,
-    src: FrameRef<'core>,
+    src: &FrameRef<'core>,
     process_chroma: bool,
 ) -> Result<FrameRef<'core>, Error> {
-    let clip = separate_rows(core, api, convert(core, api, src, PresetFormat::Gray8)?)?;
+    let clip = separate_rows(core, api, &convert(core, api, src, PresetFormat::Gray8)?)?;
 
     let even = spline36_resize_crop(
         core,
         api,
-        select_even(core, api, clip)?,
+        &select_even(core, api, &clip)?,
         clip.width(0) as i64,
         2 * clip.height(0) as i64,
         0.0,
@@ -85,7 +85,7 @@ pub(crate) fn spline36_bob<'core>(
     let odd = spline36_resize_crop(
         core,
         api,
-        select_odd(core, api, clip)?,
+        &select_odd(core, api, &clip)?,
         clip.width(0) as i64,
         2 * clip.height(0) as i64,
         0.0,
@@ -93,7 +93,7 @@ pub(crate) fn spline36_bob<'core>(
         clip.width(0) as f64,
         clip.height(0) as f64,
     )?;
-    let clip = interleave(core, api, &[even, odd])?;
+    let clip = interleave(core, api, &[&even, &odd])?;
     if src.format().id() == FormatID::from(PresetFormat::Gray8) {
         return Ok(clip);
     }
@@ -103,9 +103,9 @@ pub(crate) fn spline36_bob<'core>(
             core,
             api,
             &[
-                clip,
-                u_to_y8(core, api, spline36_bob(core, api, clip, false)?)?,
-                v_to_y8(core, api, spline36_bob(core, api, clip, false)?)?,
+                &clip,
+                &u_to_y8(core, api, &spline36_bob(core, api, &clip, false)?)?,
+                &v_to_y8(core, api, &spline36_bob(core, api, &clip, false)?)?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,
@@ -115,9 +115,9 @@ pub(crate) fn spline36_bob<'core>(
             core,
             api,
             &[
-                clip,
-                u_to_y8(core, api, select_every(core, api, clip, 1, &[0, 0])?)?,
-                v_to_y8(core, api, select_every(core, api, clip, 1, &[0, 0])?)?,
+                &clip,
+                &u_to_y8(core, api, &select_every(core, api, &clip, 1, &[0, 0])?)?,
+                &v_to_y8(core, api, &select_every(core, api, &clip, 1, &[0, 0])?)?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,
