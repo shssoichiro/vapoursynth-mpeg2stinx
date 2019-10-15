@@ -7,7 +7,7 @@ use vapoursynth::prelude::*;
 const STD_NAMESPACE: &str = "com.vapoursynth.std";
 
 pub(crate) fn separate_rows<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -36,7 +36,7 @@ pub(crate) fn separate_rows<'core>(
 }
 
 pub(crate) fn weave_rows<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -58,7 +58,7 @@ pub(crate) fn weave_rows<'core>(
 }
 
 pub(crate) fn blur_v<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     kernel: &[i64],
@@ -80,7 +80,7 @@ pub(crate) fn blur_v<'core>(
 }
 
 pub(crate) fn select_even<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -88,7 +88,7 @@ pub(crate) fn select_even<'core>(
 }
 
 pub(crate) fn select_odd<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -96,7 +96,7 @@ pub(crate) fn select_odd<'core>(
 }
 
 pub(crate) fn select_every<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     cycle: i64,
@@ -119,7 +119,7 @@ pub(crate) fn select_every<'core>(
 }
 
 pub(crate) fn interleave<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clips: &[&FrameRef<'core>],
 ) -> Result<FrameRef<'core>, Error> {
@@ -140,7 +140,7 @@ pub(crate) fn interleave<'core>(
 }
 
 pub(crate) fn shuffle_planes<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clips: &[&FrameRef<'core>],
     planes: &[i64],
@@ -165,7 +165,7 @@ pub(crate) fn shuffle_planes<'core>(
 }
 
 pub(crate) fn expand<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     mode: ExpandMode,
@@ -193,7 +193,7 @@ pub(crate) fn expand<'core>(
 }
 
 pub(crate) fn inpand<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     mode: ExpandMode,

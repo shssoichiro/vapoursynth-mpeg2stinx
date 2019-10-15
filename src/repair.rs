@@ -4,7 +4,7 @@ use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
 pub(crate) fn cross_field_repair2<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
     bobbed: Option<&FrameRef<'core>>,

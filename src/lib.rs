@@ -74,12 +74,12 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             .ok_or_else(|| format_err!("MPEG2Stinx: Couldn't get the source frame"))?;
 
         let a = cross_field_repair2(
-            &core,
+            core,
             api,
             &src,
             Some(
                 &self
-                    .deint(&core, api, &src)
+                    .deint(core, api, &src)
                     .map_err(|e| e.context("MPEG2Stinx"))?,
             ),
             self.sw,
@@ -88,17 +88,17 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
         )
         .map_err(|e| e.context("MPEG2Stinx"))?;
         let a = if let Some(diffscl) = self.diffscl {
-            temp_limit(&core, api, &src, &a, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, &src, &a, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
         } else {
             a
         };
         let b = cross_field_repair2(
-            &core,
+            core,
             api,
             &a,
             Some(
                 &self
-                    .deint(&core, api, &a)
+                    .deint(core, api, &a)
                     .map_err(|e| e.context("MPEG2Stinx"))?,
             ),
             self.sw,
@@ -107,16 +107,16 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
         )
         .map_err(|e| e.context("MPEG2Stinx"))?;
         let b = if let Some(diffscl) = self.diffscl {
-            temp_limit(&core, api, &a, &b, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, &a, &b, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
         } else {
             b
         };
         let average = self
-            .average(&core, api, &a, &b)
+            .average(core, api, &a, &b)
             .map_err(|e| e.context("MPEG2Stinx"))?;
 
         let nuked = if self.blurv > 0.0 {
-            self.blur_v(&core, api, &average, self.blurv)
+            self.blur_v(core, api, &average, self.blurv)
                 .map_err(|e| e.context("MPEG2Stinx"))?
         } else {
             average
@@ -126,33 +126,33 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
         }
 
         let nuked_blurred = blur_v(
-            &core,
+            core,
             api,
-            &blur_v(&core, api, &nuked, &self.blurv_kernels[1])?,
+            &blur_v(core, api, &nuked, &self.blurv_kernels[1])?,
             &self.blurv_kernels[1],
         )
         .map_err(|e| e.context("MPEG2Stinx"))?;
-        let sharp = lutxy_sharp(&core, &nuked, &nuked_blurred, self.sstr)
+        let sharp = lutxy_sharp(core, &nuked, &nuked_blurred, self.sstr)
             .map_err(|e| e.context("MPEG2Stinx"))?;
 
         if self.scl == 0.0 {
-            return Ok(median3(&core, api, &nuked, &sharp, &src, true)
+            return Ok(median3(core, api, &nuked, &sharp, &src, true)
                 .map_err(|e| e.context("MPEG2Stinx"))?);
         }
 
-        let nukedd = make_diff(&core, &src, &nuked).map_err(|e| e.context("MPEG2Stinx"))?;
-        let sharpd = lutxy_sharpd(&core, &nuked, &nuked_blurred, self.sstr)
+        let nukedd = make_diff(core, &src, &nuked).map_err(|e| e.context("MPEG2Stinx"))?;
+        let sharpd = lutxy_sharpd(core, &nuked, &nuked_blurred, self.sstr)
             .map_err(|e| e.context("MPEG2Stinx"))?;
         let limd =
-            lutxy_limd(&core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("MPEG2Stinx"))?;
-        Ok(add_diff(&core, &nuked, &limd).map_err(|e| e.context("MPEG2Stinx"))?)
+            lutxy_limd(core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("MPEG2Stinx"))?;
+        Ok(add_diff(core, &nuked, &limd).map_err(|e| e.context("MPEG2Stinx"))?)
     }
 }
 
 impl<'core> Mpeg2Stinx<'core> {
     fn blur_v(
         &self,
-        core: &'core CoreRef<'core>,
+        core: CoreRef<'core>,
         api: API,
         src: &FrameRef<'core>,
         strength: f32,
@@ -167,7 +167,7 @@ impl<'core> Mpeg2Stinx<'core> {
 
     fn deint(
         &self,
-        core: &'core CoreRef<'core>,
+        core: CoreRef<'core>,
         api: API,
         src: &FrameRef<'core>,
     ) -> Result<FrameRef<'core>, Error> {
@@ -198,7 +198,7 @@ impl<'core> Mpeg2Stinx<'core> {
 
     fn average(
         &self,
-        core: &'core CoreRef<'core>,
+        core: CoreRef<'core>,
         api: API,
         a: &FrameRef<'core>,
         b: &FrameRef<'core>,

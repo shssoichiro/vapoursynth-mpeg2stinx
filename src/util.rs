@@ -4,7 +4,7 @@ use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
 pub(crate) fn u_to_y8<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -17,7 +17,7 @@ pub(crate) fn u_to_y8<'core>(
 }
 
 pub(crate) fn v_to_y8<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -32,7 +32,7 @@ pub(crate) fn v_to_y8<'core>(
 /// max of the Y/U/V planes, resizing if necessary
 #[allow(clippy::many_single_char_names)]
 pub(crate) fn max_yuv<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -53,7 +53,7 @@ pub(crate) fn max_yuv<'core>(
 }
 
 pub(crate) fn median3<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     current: &FrameRef<'core>,
     previous: &FrameRef<'core>,
@@ -65,7 +65,7 @@ pub(crate) fn median3<'core>(
 }
 
 pub(crate) fn temp_limit<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     flt: &FrameRef<'core>,
@@ -123,7 +123,7 @@ impl ExpandMode {
 }
 
 pub(crate) fn expand_multi<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     sw: u32,
@@ -153,7 +153,7 @@ pub(crate) fn expand_multi<'core>(
 }
 
 pub(crate) fn inpand_multi<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     sw: u32,
@@ -183,11 +183,11 @@ pub(crate) fn inpand_multi<'core>(
 }
 
 pub(crate) fn min<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -241,11 +241,11 @@ min_fn!(u16);
 min_fn!(u32);
 
 pub(crate) fn max<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();

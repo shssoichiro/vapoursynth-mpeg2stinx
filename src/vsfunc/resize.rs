@@ -6,7 +6,7 @@ use vapoursynth::prelude::*;
 const RESIZE_NAMESPACE: &str = "com.vapoursynth.resize";
 
 pub(crate) fn point_resize<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     width: i64,
@@ -29,7 +29,7 @@ pub(crate) fn point_resize<'core>(
 }
 
 pub(crate) fn bilinear_resize<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     width: i64,
@@ -52,7 +52,7 @@ pub(crate) fn bilinear_resize<'core>(
 }
 
 pub(crate) fn spline36_resize<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     width: i64,
@@ -75,7 +75,7 @@ pub(crate) fn spline36_resize<'core>(
 }
 
 pub(crate) fn spline36_resize_crop<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     width: i64,
@@ -106,7 +106,7 @@ pub(crate) fn spline36_resize_crop<'core>(
 }
 
 pub(crate) fn convert<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     format: PresetFormat,

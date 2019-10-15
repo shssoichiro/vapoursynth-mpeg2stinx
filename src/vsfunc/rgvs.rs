@@ -6,7 +6,7 @@ use vapoursynth::prelude::*;
 const RGVS_NAMESPACE: &str = "com.vapoursynth.rgvs";
 
 pub(crate) fn clense<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     previous: &FrameRef<'core>,
@@ -31,7 +31,7 @@ pub(crate) fn clense<'core>(
 }
 
 pub(crate) fn repair<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     clip: &FrameRef<'core>,
     repair_clip: &FrameRef<'core>,

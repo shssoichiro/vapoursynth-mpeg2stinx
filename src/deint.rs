@@ -35,7 +35,7 @@ impl TryFrom<i64> for FilterMode {
 impl FilterMode {
     pub(crate) fn deint<'core>(
         self,
-        core: &'core CoreRef<'core>,
+        core: CoreRef<'core>,
         api: API,
         src: &FrameRef<'core>,
     ) -> Result<FrameRef<'core>, Error> {
@@ -49,7 +49,7 @@ impl FilterMode {
 }
 
 pub(crate) fn point_bob<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
@@ -64,7 +64,7 @@ pub(crate) fn point_bob<'core>(
 }
 
 pub(crate) fn spline36_bob<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     api: API,
     src: &FrameRef<'core>,
     process_chroma: bool,

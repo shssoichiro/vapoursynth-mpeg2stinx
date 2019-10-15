@@ -6,12 +6,12 @@ use vapoursynth::prelude::*;
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x x y - "+string(sstr)+" * +",y=3,u=3,v=3)`
 pub(crate) fn lutxy_sharp<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
     strength: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -76,12 +76,12 @@ sharp_fn!(u32, i64);
 // `mt_lutxy(x,y,expr="x y - "+string(sstr)+" * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
 pub(crate) fn lutxy_sharpd<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
     strength: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -147,12 +147,12 @@ sharpd_fn!(u32, i64);
 // `mt_lutxy(x,y,expr="x 128 - y 128 - * 0 < "+string(scl)+" 1 ? x 128 - abs y 128 - abs < x y ? 128 - * 128 +",y=3,u=3,v=3)`
 // and also fixed to work with high bit depth
 pub(crate) fn lutxy_limd<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
     scale: f32,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -220,11 +220,11 @@ limd_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - abs",y=3,u=3,v=3)`
 pub(crate) fn lutxy_diff<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -285,11 +285,11 @@ diff_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y - 128 +",y=3,u=3,v=3)`
 pub(crate) fn make_diff<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
@@ -351,11 +351,11 @@ make_diff_fn!(u32, i64);
 // Equivalent AVS:
 // `mt_lutxy(x,y,expr="x y + 128 -",y=3,u=3,v=3)`
 pub(crate) fn add_diff<'core>(
-    core: &'core CoreRef<'core>,
+    core: CoreRef<'core>,
     clip1: &FrameRef<'core>,
     clip2: &FrameRef<'core>,
 ) -> Result<FrameRef<'core>, Error> {
-    let mut filtered = FrameRefMut::copy_of(*core, &*clip1);
+    let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
     // Assume formats are equivalent, because this is an internal function
     let plane_count = clip1.format().plane_count();
