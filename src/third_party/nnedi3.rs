@@ -24,8 +24,8 @@ pub(crate) fn nnedi3<'core>(
     let fn_name = if opencl { "NNEDI3CL" } else { "nnedi3" };
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int("field", field);
+    args.set_frame("clip", &*clip)?;
+    args.set_int("field", field)?;
     let result = nnedi.invoke(fn_name, &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);

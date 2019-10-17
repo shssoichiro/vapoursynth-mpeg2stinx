@@ -157,7 +157,7 @@ impl<'core> Mpeg2Stinx<'core> {
         src: &FrameRef<'core>,
         strength: f32,
     ) -> Result<FrameRef<'core>, Error> {
-        let kernel = if strength == 1.0 {
+        let kernel = if (strength - 1.0).abs() < std::f32::EPSILON {
             &self.blurv_kernels[1]
         } else {
             &self.blurv_kernels[0]

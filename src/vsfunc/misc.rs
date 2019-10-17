@@ -22,13 +22,13 @@ pub(crate) fn average_frames<'core>(
             bail!("Number of clips must equal number of weights");
         }
         for (clip, weight) in clips.iter().zip(weights) {
-            args.append_frame("clips", &*clip);
-            args.append_float("weights", *weight);
+            args.append_frame("clips", &*clip)?;
+            args.append_float("weights", *weight)?;
         }
     } else {
         for clip in clips {
-            args.append_frame("clips", &*clip);
-            args.append_float("weights", 1.0);
+            args.append_frame("clips", &*clip)?;
+            args.append_float("weights", 1.0)?;
         }
     }
     let result = misc.invoke("AverageFrames", &args).map_err(Error::from)?;

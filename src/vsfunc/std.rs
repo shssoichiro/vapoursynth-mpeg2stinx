@@ -17,8 +17,8 @@ pub(crate) fn separate_rows<'core>(
         .unwrap();
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int("tff", 1);
+    args.set_frame("clip", &*clip)?;
+    args.set_int("tff", 1)?;
     let result = std.invoke("SeparateFields", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -26,8 +26,8 @@ pub(crate) fn separate_rows<'core>(
     let clip = result.get_frame("clip").map_err(Error::from)?;
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int("value", 0);
+    args.set_frame("clip", &*clip)?;
+    args.set_int("value", 0)?;
     let result = std.invoke("SetFieldBased", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -46,8 +46,8 @@ pub(crate) fn weave_rows<'core>(
         .unwrap();
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int("tff", 1);
+    args.set_frame("clip", &*clip)?;
+    args.set_int("tff", 1)?;
     let result = std.invoke("DoubleWeave", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -69,9 +69,9 @@ pub(crate) fn blur_v<'core>(
         .unwrap();
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int_array("matrix", kernel);
-    args.set_data("mode", "v".as_bytes());
+    args.set_frame("clip", &*clip)?;
+    args.set_int_array("matrix", kernel)?;
+    args.set_data("mode", b"v")?;
     let result = std.invoke("Convolution", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -108,9 +108,9 @@ pub(crate) fn select_every<'core>(
         .unwrap();
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int("cycle", cycle);
-    args.set_int_array("offsets", offsets);
+    args.set_frame("clip", &*clip)?;
+    args.set_int("cycle", cycle)?;
+    args.set_int_array("offsets", offsets)?;
     let result = std.invoke("SelectEvery", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -130,7 +130,7 @@ pub(crate) fn interleave<'core>(
 
     let mut args = OwnedMap::new(api);
     for clip in clips {
-        args.append_frame("clips", &*clip);
+        args.append_frame("clips", &*clip)?;
     }
     let result = std.invoke("Interleave", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
@@ -153,10 +153,10 @@ pub(crate) fn shuffle_planes<'core>(
 
     let mut args = OwnedMap::new(api);
     for clip in clips {
-        args.append_frame("clips", &*clip);
+        args.append_frame("clips", &*clip)?;
     }
-    args.set_int_array("planes", planes);
-    args.set_int("colorfamily", color_family as i64);
+    args.set_int_array("planes", planes)?;
+    args.set_int("colorfamily", color_family as i64)?;
     let result = std.invoke("ShufflePlanes", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -182,9 +182,9 @@ pub(crate) fn expand<'core>(
 
     let planes: &[i64] = if process_chroma { &[0, 1, 2] } else { &[0] };
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int_array("coordinates", &mode.to_coords());
-    args.set_int_array("planes", planes);
+    args.set_frame("clip", &*clip)?;
+    args.set_int_array("coordinates", &mode.to_coords())?;
+    args.set_int_array("planes", planes)?;
     let result = std.invoke("Maximum", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
@@ -210,9 +210,9 @@ pub(crate) fn inpand<'core>(
 
     let planes: &[i64] = if process_chroma { &[0, 1, 2] } else { &[0] };
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_int_array("coordinates", &mode.to_coords());
-    args.set_int_array("planes", planes);
+    args.set_frame("clip", &*clip)?;
+    args.set_int_array("coordinates", &mode.to_coords())?;
+    args.set_int_array("planes", planes)?;
     let result = std.invoke("Minimum", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);

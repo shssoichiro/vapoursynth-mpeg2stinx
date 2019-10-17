@@ -19,10 +19,10 @@ pub(crate) fn yadifmod<'core>(
         .unwrap();
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip);
-    args.set_frame("edeint", &*edeint);
-    args.set_int("order", order);
-    args.set_int("mode", mode);
+    args.set_frame("clip", &*clip)?;
+    args.set_frame("edeint", &*edeint)?;
+    args.set_int("order", order)?;
+    args.set_int("mode", mode)?;
     let result = nnedi.invoke("Yadifmod", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
