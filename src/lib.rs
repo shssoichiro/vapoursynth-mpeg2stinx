@@ -80,15 +80,15 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             Some(
                 &self
                     .deint(core, api, &src)
-                    .map_err(|e| e.context("Mpeg2Stinx"))?,
+                    .map_err(|e| e.context("Mpeg2Stinx: "))?,
             ),
             self.sw,
             self.sh,
             true,
         )
-        .map_err(|e| e.context("Mpeg2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx: "))?;
         let a = if let Some(diffscl) = self.diffscl {
-            temp_limit(core, api, &src, &a, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx"))?
+            temp_limit(core, api, &src, &a, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx: "))?
         } else {
             a
         };
@@ -99,25 +99,25 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             Some(
                 &self
                     .deint(core, api, &a)
-                    .map_err(|e| e.context("Mpeg2Stinx"))?,
+                    .map_err(|e| e.context("Mpeg2Stinx: "))?,
             ),
             self.sw,
             self.sh,
             true,
         )
-        .map_err(|e| e.context("Mpeg2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx: "))?;
         let b = if let Some(diffscl) = self.diffscl {
-            temp_limit(core, api, &a, &b, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx"))?
+            temp_limit(core, api, &a, &b, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx: "))?
         } else {
             b
         };
         let average = self
             .average(core, api, &a, &b)
-            .map_err(|e| e.context("Mpeg2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx: "))?;
 
         let nuked = if self.blurv > 0.0 {
             self.blur_v(core, api, &average, self.blurv)
-                .map_err(|e| e.context("Mpeg2Stinx"))?
+                .map_err(|e| e.context("Mpeg2Stinx: "))?
         } else {
             average
         };
@@ -131,21 +131,21 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             &blur_v(core, api, &nuked, &self.blurv_kernels[1])?,
             &self.blurv_kernels[1],
         )
-        .map_err(|e| e.context("Mpeg2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx: "))?;
         let sharp = lutxy_sharp(core, &nuked, &nuked_blurred, self.sstr)
-            .map_err(|e| e.context("Mpeg2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx: "))?;
 
         if self.scl == 0.0 {
             return Ok(median3(core, api, &nuked, &sharp, &src, true)
-                .map_err(|e| e.context("Mpeg2Stinx"))?);
+                .map_err(|e| e.context("Mpeg2Stinx: "))?);
         }
 
-        let nukedd = make_diff(core, &src, &nuked).map_err(|e| e.context("Mpeg2Stinx"))?;
+        let nukedd = make_diff(core, &src, &nuked).map_err(|e| e.context("Mpeg2Stinx: "))?;
         let sharpd = lutxy_sharpd(core, &nuked, &nuked_blurred, self.sstr)
-            .map_err(|e| e.context("Mpeg2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx: "))?;
         let limd =
-            lutxy_limd(core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("Mpeg2Stinx"))?;
-        Ok(add_diff(core, &nuked, &limd).map_err(|e| e.context("Mpeg2Stinx"))?)
+            lutxy_limd(core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("Mpeg2Stinx: "))?;
+        Ok(add_diff(core, &nuked, &limd).map_err(|e| e.context("Mpeg2Stinx: "))?)
     }
 }
 
