@@ -71,7 +71,7 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
         let src = self
             .clip
             .get_frame_filter(context, n)
-            .ok_or_else(|| format_err!("MPEG2Stinx: Couldn't get the source frame"))?;
+            .ok_or_else(|| format_err!("Mpeg2Stinx: Couldn't get the source frame"))?;
 
         let a = cross_field_repair2(
             core,
@@ -80,15 +80,15 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             Some(
                 &self
                     .deint(core, api, &src)
-                    .map_err(|e| e.context("MPEG2Stinx"))?,
+                    .map_err(|e| e.context("Mpeg2Stinx"))?,
             ),
             self.sw,
             self.sh,
             true,
         )
-        .map_err(|e| e.context("MPEG2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx"))?;
         let a = if let Some(diffscl) = self.diffscl {
-            temp_limit(core, api, &src, &a, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, &src, &a, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx"))?
         } else {
             a
         };
@@ -99,25 +99,25 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             Some(
                 &self
                     .deint(core, api, &a)
-                    .map_err(|e| e.context("MPEG2Stinx"))?,
+                    .map_err(|e| e.context("Mpeg2Stinx"))?,
             ),
             self.sw,
             self.sh,
             true,
         )
-        .map_err(|e| e.context("MPEG2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx"))?;
         let b = if let Some(diffscl) = self.diffscl {
-            temp_limit(core, api, &a, &b, &src, diffscl).map_err(|e| e.context("MPEG2Stinx"))?
+            temp_limit(core, api, &a, &b, &src, diffscl).map_err(|e| e.context("Mpeg2Stinx"))?
         } else {
             b
         };
         let average = self
             .average(core, api, &a, &b)
-            .map_err(|e| e.context("MPEG2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx"))?;
 
         let nuked = if self.blurv > 0.0 {
             self.blur_v(core, api, &average, self.blurv)
-                .map_err(|e| e.context("MPEG2Stinx"))?
+                .map_err(|e| e.context("Mpeg2Stinx"))?
         } else {
             average
         };
@@ -131,21 +131,21 @@ impl<'core> Filter<'core> for Mpeg2Stinx<'core> {
             &blur_v(core, api, &nuked, &self.blurv_kernels[1])?,
             &self.blurv_kernels[1],
         )
-        .map_err(|e| e.context("MPEG2Stinx"))?;
+        .map_err(|e| e.context("Mpeg2Stinx"))?;
         let sharp = lutxy_sharp(core, &nuked, &nuked_blurred, self.sstr)
-            .map_err(|e| e.context("MPEG2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx"))?;
 
         if self.scl == 0.0 {
             return Ok(median3(core, api, &nuked, &sharp, &src, true)
-                .map_err(|e| e.context("MPEG2Stinx"))?);
+                .map_err(|e| e.context("Mpeg2Stinx"))?);
         }
 
-        let nukedd = make_diff(core, &src, &nuked).map_err(|e| e.context("MPEG2Stinx"))?;
+        let nukedd = make_diff(core, &src, &nuked).map_err(|e| e.context("Mpeg2Stinx"))?;
         let sharpd = lutxy_sharpd(core, &nuked, &nuked_blurred, self.sstr)
-            .map_err(|e| e.context("MPEG2Stinx"))?;
+            .map_err(|e| e.context("Mpeg2Stinx"))?;
         let limd =
-            lutxy_limd(core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("MPEG2Stinx"))?;
-        Ok(add_diff(core, &nuked, &limd).map_err(|e| e.context("MPEG2Stinx"))?)
+            lutxy_limd(core, &sharpd, &nukedd, self.scl).map_err(|e| e.context("Mpeg2Stinx"))?;
+        Ok(add_diff(core, &nuked, &limd).map_err(|e| e.context("Mpeg2Stinx"))?)
     }
 }
 
@@ -263,7 +263,7 @@ make_filter_function! {
             Some(sw) => {
                 ensure!(
                     sw >= 0,
-                    "MPEG2Stinx: sw and sh must both be non-negative integers"
+                    "Mpeg2Stinx: sw and sh must both be non-negative integers"
                 );
                 sw as u32
             }
@@ -273,7 +273,7 @@ make_filter_function! {
             Some(sh) => {
                 ensure!(
                     sh >= 0,
-                    "MPEG2Stinx: sw and sh must both be non-negative integers"
+                    "Mpeg2Stinx: sw and sh must both be non-negative integers"
                 );
                 sh as u32
             }
@@ -287,12 +287,12 @@ make_filter_function! {
         let order = order.unwrap_or(-1);
         ensure!(
             order >= -1 && order <= 1,
-            "MPEG2Stinx: order must be -1, 0 or 1"
+            "Mpeg2Stinx: order must be -1, 0 or 1"
         );
         if let Some(diffscl) = diffscl {
             ensure!(
                 diffscl >= 0.0,
-                "MPEG2Stinx: diffscl must be a non-negative number"
+                "Mpeg2Stinx: diffscl must be a non-negative number"
             );
         }
 
@@ -315,9 +315,9 @@ make_filter_function! {
 
 export_vapoursynth_plugin! {
     Metadata {
-        identifier: "com.denoise.mpeg2stinx",
+        identifier: "com.soichiro.mpeg2stinx",
         namespace: "mpeg2stinx",
-        name: "MPEG2Stinx",
+        name: "Mpeg2Stinx",
         read_only: true,
     },
     [Mpeg2StinxFunction::new()]

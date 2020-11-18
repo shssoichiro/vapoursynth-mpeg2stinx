@@ -27,7 +27,7 @@ impl TryFrom<i64> for FilterMode {
             1 => FilterMode::Spline36Bob,
             2 => FilterMode::Nnedi3,
             3 => FilterMode::Nnedi3CL,
-            _ => bail!("MPEG2Stinx: mode must be 0, 1, 2, or 3"),
+            _ => bail!("Mpeg2Stinx: mode must be 0, 1, 2, or 3"),
         })
     }
 }
