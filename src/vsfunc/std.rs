@@ -1,6 +1,6 @@
 use crate::util::ExpandMode;
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
@@ -14,7 +14,7 @@ pub(crate) fn separate_rows<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", clip)?;
@@ -43,7 +43,7 @@ pub(crate) fn weave_rows<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", clip)?;
@@ -66,7 +66,7 @@ pub(crate) fn blur_v<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", clip)?;
@@ -105,7 +105,7 @@ pub(crate) fn select_every<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", clip)?;
@@ -126,7 +126,7 @@ pub(crate) fn interleave<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     for clip in clips {
@@ -149,7 +149,7 @@ pub(crate) fn shuffle_planes<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     for clip in clips {
@@ -178,7 +178,7 @@ pub(crate) fn expand<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let planes: &[i64] = if process_chroma { &[0, 1, 2] } else { &[0] };
     let mut args = OwnedMap::new(api);
@@ -206,7 +206,7 @@ pub(crate) fn inpand<'core>(
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("std namespace not found"))?;
 
     let planes: &[i64] = if process_chroma { &[0, 1, 2] } else { &[0] };
     let mut args = OwnedMap::new(api);

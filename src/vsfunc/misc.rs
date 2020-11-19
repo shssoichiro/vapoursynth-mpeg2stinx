@@ -1,5 +1,5 @@
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
@@ -14,7 +14,7 @@ pub(crate) fn average_frames<'core>(
     let misc = core
         .get_plugin_by_id(MISC_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("misc namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     if let Some(weights) = weights {

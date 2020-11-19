@@ -1,5 +1,5 @@
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
@@ -15,7 +15,7 @@ pub(crate) fn point_resize<'core>(
     let resize = core
         .get_plugin_by_id(RESIZE_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("resize namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
@@ -38,7 +38,7 @@ pub(crate) fn bilinear_resize<'core>(
     let resize = core
         .get_plugin_by_id(RESIZE_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("resize namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
@@ -66,7 +66,7 @@ pub(crate) fn spline36_resize_crop<'core>(
     let resize = core
         .get_plugin_by_id(RESIZE_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("resize namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
@@ -92,7 +92,7 @@ pub(crate) fn convert<'core>(
     let resize = core
         .get_plugin_by_id(RESIZE_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("resize namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;

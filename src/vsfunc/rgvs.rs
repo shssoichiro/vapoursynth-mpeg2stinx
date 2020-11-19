@@ -1,9 +1,9 @@
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
-const RGVS_NAMESPACE: &str = "com.vapoursynth.rgvs";
+const RGVS_NAMESPACE: &str = "com.vapoursynth.removegrainvs";
 
 pub(crate) fn repair<'core>(
     core: CoreRef<'core>,
@@ -15,11 +15,11 @@ pub(crate) fn repair<'core>(
     let rgvs = core
         .get_plugin_by_id(RGVS_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("removegrainvs namespace not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
-    args.set_node("repair_clip", &*repair_clip)?;
+    args.set_node("repairclip", &*repair_clip)?;
     args.set_int("mode", mode)?;
     let result = rgvs.invoke("Repair", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
