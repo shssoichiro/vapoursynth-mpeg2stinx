@@ -1,5 +1,5 @@
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
@@ -20,7 +20,7 @@ pub(crate) fn nnedi3<'core>(
             NNEDI3_NAMESPACE
         })
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("nnedi3(cl) plugin not found"))?;
     let fn_name = if opencl { "NNEDI3CL" } else { "nnedi3" };
 
     let mut args = OwnedMap::new(api);

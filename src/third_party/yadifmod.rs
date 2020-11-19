@@ -1,5 +1,5 @@
-use failure::bail;
 use failure::Error;
+use failure::{bail, format_err};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
 
@@ -16,7 +16,7 @@ pub(crate) fn yadifmod<'core>(
     let nnedi = core
         .get_plugin_by_id(YADIFMOD_NAMESPACE)
         .map_err(Error::from)?
-        .unwrap();
+        .ok_or_else(|| format_err!("yadifmod plugin not found"))?;
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
