@@ -6,12 +6,12 @@ use vapoursynth::prelude::*;
 pub(crate) fn cross_field_repair2<'core>(
     core: CoreRef<'core>,
     api: API,
-    src: &FrameRef<'core>,
-    bobbed: Option<&FrameRef<'core>>,
+    src: &Node<'core>,
+    bobbed: Option<&Node<'core>>,
     sw: u32,
     sh: u32,
     process_chroma: bool,
-) -> Result<FrameRef<'core>, Error> {
+) -> Result<Node<'core>, Error> {
     let bobbed = match bobbed {
         Some(bobbed) => bobbed.clone(),
         None => spline36_bob(core, api, src, process_chroma)?,
@@ -21,7 +21,7 @@ pub(crate) fn cross_field_repair2<'core>(
     let re = if sw == 1 && sh == 1 {
         repair(core, api, src, &select_even(core, api, &bobbed)?, 1)?
     } else {
-        median3(
+        median3_clip(
             core,
             api,
             src,
@@ -33,7 +33,7 @@ pub(crate) fn cross_field_repair2<'core>(
     let ro = if sw == 1 && sh == 1 {
         repair(core, api, src, &select_odd(core, api, &bobbed)?, 1)?
     } else {
-        median3(
+        median3_clip(
             core,
             api,
             src,

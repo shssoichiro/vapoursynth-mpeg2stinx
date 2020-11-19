@@ -4,6 +4,7 @@ use failure::Error;
 use std::convert::TryFrom;
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
+use vapoursynth::video_info::Property::Constant;
 
 #[derive(Debug, Clone, Copy)]
 pub enum FilterMode {
@@ -37,8 +38,8 @@ impl FilterMode {
         self,
         core: CoreRef<'core>,
         api: API,
-        src: &FrameRef<'core>,
-    ) -> Result<FrameRef<'core>, Error> {
+        src: &Node<'core>,
+    ) -> Result<Node<'core>, Error> {
         match self {
             FilterMode::PointBob => point_bob(core, api, src),
             FilterMode::Spline36Bob => spline36_bob(core, api, src, true),
@@ -51,50 +52,60 @@ impl FilterMode {
 pub(crate) fn point_bob<'core>(
     core: CoreRef<'core>,
     api: API,
-    src: &FrameRef<'core>,
-) -> Result<FrameRef<'core>, Error> {
+    src: &Node<'core>,
+) -> Result<Node<'core>, Error> {
     let clip = separate_rows(core, api, src)?;
-    point_resize(
-        core,
-        api,
-        &clip,
-        clip.width(0) as i64,
-        2 * clip.height(0) as i64,
-    )
+    let res = if let Constant(res) = clip.info().resolution {
+        res
+    } else {
+        bail!("Resolution is not constant");
+    };
+    point_resize(core, api, &clip, res.width as i64, 2 * res.height as i64)
 }
 
 pub(crate) fn spline36_bob<'core>(
     core: CoreRef<'core>,
     api: API,
-    src: &FrameRef<'core>,
+    src: &Node<'core>,
     process_chroma: bool,
-) -> Result<FrameRef<'core>, Error> {
+) -> Result<Node<'core>, Error> {
     let clip = separate_rows(core, api, &convert(core, api, src, PresetFormat::Gray8)?)?;
+    let res = if let Constant(res) = clip.info().resolution {
+        res
+    } else {
+        bail!("Resolution is not constant");
+    };
 
     let even = spline36_resize_crop(
         core,
         api,
         &select_even(core, api, &clip)?,
-        clip.width(0) as i64,
-        2 * clip.height(0) as i64,
+        res.width as i64,
+        2 * res.height as i64,
         0.0,
         0.25,
-        clip.width(0) as f64,
-        clip.height(0) as f64,
+        res.width as f64,
+        res.height as f64,
     )?;
     let odd = spline36_resize_crop(
         core,
         api,
         &select_odd(core, api, &clip)?,
-        clip.width(0) as i64,
-        2 * clip.height(0) as i64,
+        res.width as i64,
+        2 * res.height as i64,
         0.0,
         -0.25,
-        clip.width(0) as f64,
-        clip.height(0) as f64,
+        res.width as f64,
+        res.height as f64,
     )?;
     let clip = interleave(core, api, &[&even, &odd])?;
-    if src.format().id() == FormatID::from(PresetFormat::Gray8) {
+
+    let format = if let Constant(format) = src.info().format {
+        format
+    } else {
+        bail!("Resolution is not constant");
+    };
+    if format.id() == FormatID::from(PresetFormat::Gray8) {
         return Ok(clip);
     }
 

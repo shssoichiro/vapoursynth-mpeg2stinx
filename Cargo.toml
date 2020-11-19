@@ -14,3 +14,6 @@ vapoursynth = { version = "0.3.0", features = ["vapoursynth-api-35"] }
 
 [lib]
 crate-type = ["cdylib"]
+
+[profile.release]
+lto = "thin"

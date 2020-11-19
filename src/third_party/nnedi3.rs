@@ -9,10 +9,10 @@ const NNEDI3CL_NAMESPACE: &str = "com.holywu.nnedi3cl";
 pub(crate) fn nnedi3<'core>(
     core: CoreRef<'core>,
     api: API,
-    clip: &FrameRef<'core>,
+    clip: &Node<'core>,
     field: i64,
     opencl: bool,
-) -> Result<FrameRef<'core>, Error> {
+) -> Result<Node<'core>, Error> {
     let nnedi = core
         .get_plugin_by_id(if opencl {
             NNEDI3CL_NAMESPACE
@@ -24,11 +24,11 @@ pub(crate) fn nnedi3<'core>(
     let fn_name = if opencl { "NNEDI3CL" } else { "nnedi3" };
 
     let mut args = OwnedMap::new(api);
-    args.set_frame("clip", &*clip)?;
+    args.set_node("clip", &*clip)?;
     args.set_int("field", field)?;
     let result = nnedi.invoke(fn_name, &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);
     }
-    result.get_frame("clip").map_err(Error::from)
+    result.get_node("clip").map_err(Error::from)
 }
