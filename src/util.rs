@@ -390,9 +390,8 @@ pub(crate) fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     }
 }
 
-pub(crate) fn build_blurv_kernel(strength: f64) -> [i64; 3] {
-    // Vapoursynth's Convolution kernel only accepts integers,
-    // but strength accepts a float,
+pub(crate) fn build_blurv_kernel(strength: f64) -> [f64; 3] {
+    // Vapoursynth's Convolution kernel will round our numbers to integers,
     // so scale up as far as possible for the most accuracy.
     const MAX: f64 = 1023.0;
     let inner_factor = 1.0 / 2f64.powf(strength);
@@ -407,11 +406,7 @@ pub(crate) fn build_blurv_kernel(strength: f64) -> [i64; 3] {
     } else {
         MAX / outer_factor
     };
-    [
-        outer.round() as i64,
-        inner.round() as i64,
-        outer.round() as i64,
-    ]
+    [outer, inner, outer]
 }
 
 pub(crate) fn blur_v<'core>(

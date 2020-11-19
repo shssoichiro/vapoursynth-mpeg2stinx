@@ -61,7 +61,7 @@ pub(crate) fn blur_v<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: &Node<'core>,
-    kernel: &[i64],
+    kernel: &[f64],
 ) -> Result<Node<'core>, Error> {
     let std = core
         .get_plugin_by_id(STD_NAMESPACE)
@@ -70,7 +70,7 @@ pub(crate) fn blur_v<'core>(
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", clip)?;
-    args.set_int_array("matrix", kernel)?;
+    args.set_float_array("matrix", kernel)?;
     args.set_data("mode", b"v")?;
     let result = std.invoke("Convolution", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
