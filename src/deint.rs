@@ -69,7 +69,11 @@ pub(crate) fn spline36_bob<'core>(
     src: &Node<'core>,
     process_chroma: bool,
 ) -> Result<Node<'core>, Error> {
-    let clip = separate_rows(core, api, &convert(core, api, src, PresetFormat::Gray8)?)?;
+    let clip = separate_rows(
+        core,
+        api,
+        &convert(core, api, src, PresetFormat::Gray8 as i64)?,
+    )?;
     let res = if let Constant(res) = clip.info().resolution {
         res
     } else {
@@ -115,8 +119,8 @@ pub(crate) fn spline36_bob<'core>(
             api,
             &[
                 &clip,
-                &u_to_y8(core, api, &spline36_bob(core, api, &clip, false)?)?,
-                &v_to_y8(core, api, &spline36_bob(core, api, &clip, false)?)?,
+                &spline36_bob(core, api, &u_to_y8(core, api, &clip)?, false)?,
+                &spline36_bob(core, api, &v_to_y8(core, api, &clip)?, false)?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,
@@ -127,8 +131,8 @@ pub(crate) fn spline36_bob<'core>(
             api,
             &[
                 &clip,
-                &u_to_y8(core, api, &select_every(core, api, &clip, 1, &[0, 0])?)?,
-                &v_to_y8(core, api, &select_every(core, api, &clip, 1, &[0, 0])?)?,
+                &select_every(core, api, &u_to_y8(core, api, &clip)?, 1, &[0, 0])?,
+                &select_every(core, api, &v_to_y8(core, api, &clip)?, 1, &[0, 0])?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,

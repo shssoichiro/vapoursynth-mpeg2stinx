@@ -10,11 +10,18 @@ pub(crate) fn u_to_y8<'core>(
     api: API,
     src: &Node<'core>,
 ) -> Result<Node<'core>, Error> {
+    if let Constant(format) = src.info().format {
+        if format.plane_count() == 1 {
+            return convert(core, api, src, PresetFormat::Gray8 as i64);
+        }
+    } else {
+        bail!("Format is not constant");
+    };
     convert(
         core,
         api,
         &shuffle_planes(core, api, &[src], &[1], ColorFamily::Gray)?,
-        PresetFormat::Gray8,
+        PresetFormat::Gray8 as i64,
     )
 }
 
@@ -23,11 +30,18 @@ pub(crate) fn v_to_y8<'core>(
     api: API,
     src: &Node<'core>,
 ) -> Result<Node<'core>, Error> {
+    if let Constant(format) = src.info().format {
+        if format.plane_count() == 1 {
+            return convert(core, api, src, PresetFormat::Gray8 as i64);
+        }
+    } else {
+        bail!("Format is not constant");
+    };
     convert(
         core,
         api,
         &shuffle_planes(core, api, &[src], &[2], ColorFamily::Gray)?,
-        PresetFormat::Gray8,
+        PresetFormat::Gray8 as i64,
     )
 }
 
@@ -38,7 +52,7 @@ pub(crate) fn max_yuv<'core>(
     api: API,
     src: &Node<'core>,
 ) -> Result<Node<'core>, Error> {
-    let y = convert(core, api, src, PresetFormat::Gray8)?;
+    let y = convert(core, api, src, PresetFormat::Gray8 as i64)?;
     let u = u_to_y8(core, api, src)?;
     let v = v_to_y8(core, api, src)?;
     let y_res = if let Constant(res) = y.info().resolution {
@@ -152,7 +166,7 @@ pub(crate) fn temp_limit<'core>(
     reff: &Node<'core>,
     diffscl: f64,
 ) -> Result<Node<'core>, Error> {
-    let adj = select_every(core, api, reff, -1, &[1])?;
+    let adj = select_every(core, api, reff, 1, &[-1, 1])?;
     let diff = max_yuv(
         core,
         api,

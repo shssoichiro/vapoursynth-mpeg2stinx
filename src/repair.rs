@@ -1,7 +1,8 @@
 use super::*;
-use failure::Error;
+use failure::{bail, Error};
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
+use vapoursynth::video_info::Property::Constant;
 
 pub(crate) fn cross_field_repair2<'core>(
     core: CoreRef<'core>,
@@ -12,6 +13,12 @@ pub(crate) fn cross_field_repair2<'core>(
     sh: u32,
     process_chroma: bool,
 ) -> Result<Node<'core>, Error> {
+    let format = if let Constant(format) = src.info().format {
+        format.id()
+    } else {
+        bail!("Format not constant");
+    };
+
     let bobbed = match bobbed {
         Some(bobbed) => bobbed.clone(),
         None => spline36_bob(core, api, src, process_chroma)?,
@@ -19,7 +26,13 @@ pub(crate) fn cross_field_repair2<'core>(
     let bobbed_ex = expand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
     let bobbed_in = inpand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
     let re = if sw == 1 && sh == 1 {
-        repair(core, api, src, &select_even(core, api, &bobbed)?, 1)?
+        repair(
+            core,
+            api,
+            src,
+            &convert(core, api, &select_even(core, api, &bobbed)?, *format as i64)?,
+            1,
+        )?
     } else {
         median3_clip(
             core,
@@ -31,7 +44,13 @@ pub(crate) fn cross_field_repair2<'core>(
         )?
     };
     let ro = if sw == 1 && sh == 1 {
-        repair(core, api, src, &select_odd(core, api, &bobbed)?, 1)?
+        repair(
+            core,
+            api,
+            src,
+            &convert(core, api, &select_odd(core, api, &bobbed)?, *format as i64)?,
+            1,
+        )?
     } else {
         median3_clip(
             core,

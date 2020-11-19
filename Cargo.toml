@@ -11,7 +11,7 @@ license = "MIT"
 failure = "0.1.6"
 paste = "1.0.0"
 #vapoursynth = { version = "0.3.0", features = ["vapoursynth-api-35"] }
-vapoursynth = { git = "https://github.com/shssoichiro/vapoursynth-rs", branch = "fix-color-family", features = ["vapoursynth-api-35"] }
+vapoursynth = { git = "https://github.com/shssoichiro/vapoursynth-rs", branch = "deref-format-id", features = ["vapoursynth-api-35"] }
 
 [lib]
 crate-type = ["cdylib"]
