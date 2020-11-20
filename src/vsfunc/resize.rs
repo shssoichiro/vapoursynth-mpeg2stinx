@@ -87,7 +87,7 @@ pub(crate) fn convert<'core>(
     core: CoreRef<'core>,
     api: API,
     clip: &Node<'core>,
-    format: i64,
+    format: i32,
 ) -> Result<Node<'core>, Error> {
     let resize = core
         .get_plugin_by_id(RESIZE_NAMESPACE)
@@ -96,7 +96,7 @@ pub(crate) fn convert<'core>(
 
     let mut args = OwnedMap::new(api);
     args.set_node("clip", &*clip)?;
-    args.set_int("format", format)?;
+    args.set_int("format", format as i64)?;
     let result = resize.invoke("Spline36", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
         bail!("{}", e);

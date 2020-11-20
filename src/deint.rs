@@ -72,7 +72,7 @@ pub(crate) fn spline36_bob<'core>(
     let clip = separate_rows(
         core,
         api,
-        &convert(core, api, src, PresetFormat::Gray8 as i64)?,
+        &convert(core, api, src, PresetFormat::Gray8 as i32)?,
     )?;
     let res = if let Constant(res) = clip.info().resolution {
         res

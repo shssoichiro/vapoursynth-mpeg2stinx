@@ -26,21 +26,21 @@ pub(crate) fn cross_field_repair2<'core>(
             Some(bobbed) => bobbed.clone(),
             None => spline36_bob(core, api, src, process_chroma)?,
         },
-        *format as i64,
+        format.into(),
     )?;
     let (re, ro) = if sw == 1 && sh == 1 {
         let re = repair(
             core,
             api,
             src,
-            &convert(core, api, &select_even(core, api, &bobbed)?, *format as i64)?,
+            &convert(core, api, &select_even(core, api, &bobbed)?, format.into())?,
             1,
         )?;
         let ro = repair(
             core,
             api,
             src,
-            &convert(core, api, &select_odd(core, api, &bobbed)?, *format as i64)?,
+            &convert(core, api, &select_odd(core, api, &bobbed)?, format.into())?,
             1,
         )?;
         (re, ro)
