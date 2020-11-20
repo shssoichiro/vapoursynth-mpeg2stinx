@@ -139,6 +139,8 @@ and has little effect on artifact removal.
 
 Default: `None`
 
+*Work in progress, don't use yet*
+
 If specified, temporal limiting is used, where the changes by `crossfieldrepair`
 are limited to `diffscl` times the difference between the current frame
 and its neighbours.
