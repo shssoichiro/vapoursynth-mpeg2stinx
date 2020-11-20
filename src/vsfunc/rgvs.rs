@@ -23,12 +23,7 @@ pub(crate) fn repair<'core>(
     args.set_int("mode", mode)?;
     let result = rgvs.invoke("Repair", &args).map_err(Error::from)?;
     if let Some(e) = result.error() {
-        bail!(
-            "{} {:?} {:?}",
-            e,
-            clip.info().format,
-            repair_clip.info().format
-        );
+        bail!("{}", e);
     }
     result.get_node("clip").map_err(Error::from)
 }

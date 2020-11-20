@@ -1,5 +1,5 @@
 use super::*;
-use failure::{bail, Error};
+use failure::{bail, ensure, Error};
 use std::cmp;
 use vapoursynth::core::CoreRef;
 use vapoursynth::prelude::*;
@@ -90,7 +90,30 @@ pub(crate) fn median3<'core>(
 ) -> Result<FrameRef<'core>, Error> {
     let mut filtered = FrameRefMut::copy_of(core, &*clip1);
 
-    // Assume formats are equivalent, because this is an internal function
+    ensure!(
+        clip1.format().plane_count() == clip2.format().plane_count(),
+        "Clip2 had {} planes, expected {}",
+        clip2.format().plane_count(),
+        clip1.format().plane_count()
+    );
+    ensure!(
+        clip1.format().plane_count() == clip3.format().plane_count(),
+        "Clip3 had {} planes, expected {}",
+        clip3.format().plane_count(),
+        clip1.format().plane_count()
+    );
+    ensure!(
+        clip1.format().bits_per_sample() == clip2.format().bits_per_sample(),
+        "Clip2 had bit depth of {}, expected {}",
+        clip2.format().bits_per_sample(),
+        clip1.format().bits_per_sample()
+    );
+    ensure!(
+        clip1.format().bits_per_sample() == clip3.format().bits_per_sample(),
+        "Clip3 had bit depth of {}, expected {}",
+        clip3.format().bits_per_sample(),
+        clip1.format().bits_per_sample()
+    );
     let plane_count = cmp::min(
         clip1.format().plane_count(),
         if process_chroma { 3 } else { 1 },

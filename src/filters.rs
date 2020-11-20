@@ -172,15 +172,15 @@ impl<'core> Filter<'core> for Median3<'core> {
         let clip1 = self
             .clip1
             .get_frame_filter(context, n)
-            .ok_or_else(|| format_err!("Max: Couldn't get clip1 frame"))?;
+            .ok_or_else(|| format_err!("Median3: Couldn't get clip1 frame"))?;
         let clip2 = self
             .clip2
             .get_frame_filter(context, n)
-            .ok_or_else(|| format_err!("Max: Couldn't get clip2 frame"))?;
+            .ok_or_else(|| format_err!("Median3: Couldn't get clip2 frame"))?;
         let clip3 = self
             .clip3
             .get_frame_filter(context, n)
-            .ok_or_else(|| format_err!("Max: Couldn't get clip2 frame"))?;
+            .ok_or_else(|| format_err!("Median3: Couldn't get clip3 frame"))?;
 
         median3(core, &clip1, &clip2, &clip3, self.process_chroma)
     }

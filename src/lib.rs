@@ -307,5 +307,11 @@ export_vapoursynth_plugin! {
         name: "Mpeg2Stinx",
         read_only: true,
     },
-    [Mpeg2StinxFunction::new(), MinFunction::new(), MaxFunction::new(), LutXYDiffFunction::new()]
+    [
+        Mpeg2StinxFunction::new(),
+        MinFunction::new(),
+        MaxFunction::new(),
+        Median3Function::new(),
+        LutXYDiffFunction::new()
+    ]
 }

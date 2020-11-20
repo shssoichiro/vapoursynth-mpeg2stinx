@@ -19,47 +19,51 @@ pub(crate) fn cross_field_repair2<'core>(
         bail!("Format not constant");
     };
 
-    let bobbed = match bobbed {
-        Some(bobbed) => bobbed.clone(),
-        None => spline36_bob(core, api, src, process_chroma)?,
-    };
-    let bobbed_ex = expand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
-    let bobbed_in = inpand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
-    let re = if sw == 1 && sh == 1 {
-        repair(
+    let bobbed = convert(
+        core,
+        api,
+        &match bobbed {
+            Some(bobbed) => bobbed.clone(),
+            None => spline36_bob(core, api, src, process_chroma)?,
+        },
+        *format as i64,
+    )?;
+    let (re, ro) = if sw == 1 && sh == 1 {
+        let re = repair(
             core,
             api,
             src,
             &convert(core, api, &select_even(core, api, &bobbed)?, *format as i64)?,
             1,
-        )?
+        )?;
+        let ro = repair(
+            core,
+            api,
+            src,
+            &convert(core, api, &select_odd(core, api, &bobbed)?, *format as i64)?,
+            1,
+        )?;
+        (re, ro)
     } else {
-        median3_clip(
+        let bobbed_ex = expand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
+        let bobbed_in = inpand_multi(core, api, &bobbed, sw, sh, process_chroma)?;
+        let re = median3_clip(
             core,
             api,
             src,
             &select_even(core, api, &bobbed_ex)?,
             &select_even(core, api, &bobbed_in)?,
             process_chroma,
-        )?
-    };
-    let ro = if sw == 1 && sh == 1 {
-        repair(
-            core,
-            api,
-            src,
-            &convert(core, api, &select_odd(core, api, &bobbed)?, *format as i64)?,
-            1,
-        )?
-    } else {
-        median3_clip(
+        )?;
+        let ro = median3_clip(
             core,
             api,
             src,
             &select_odd(core, api, &bobbed_ex)?,
             &select_odd(core, api, &bobbed_in)?,
             process_chroma,
-        )?
+        )?;
+        (re, ro)
     };
     let clip = interleave(core, api, &[&re, &ro])?;
     let clip = separate_rows(core, api, &clip)?;

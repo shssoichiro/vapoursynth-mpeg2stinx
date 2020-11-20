@@ -119,8 +119,8 @@ pub(crate) fn spline36_bob<'core>(
             api,
             &[
                 &clip,
-                &spline36_bob(core, api, &u_to_y8(core, api, &clip)?, false)?,
-                &spline36_bob(core, api, &v_to_y8(core, api, &clip)?, false)?,
+                &spline36_bob(core, api, &u_to_y8(core, api, &src)?, false)?,
+                &spline36_bob(core, api, &v_to_y8(core, api, &src)?, false)?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,
@@ -131,8 +131,8 @@ pub(crate) fn spline36_bob<'core>(
             api,
             &[
                 &clip,
-                &select_every(core, api, &u_to_y8(core, api, &clip)?, 1, &[0, 0])?,
-                &select_every(core, api, &v_to_y8(core, api, &clip)?, 1, &[0, 0])?,
+                &select_every(core, api, &u_to_y8(core, api, &src)?, 1, &[0, 0])?,
+                &select_every(core, api, &v_to_y8(core, api, &src)?, 1, &[0, 0])?,
             ],
             &[0, 0, 0],
             ColorFamily::YUV,
