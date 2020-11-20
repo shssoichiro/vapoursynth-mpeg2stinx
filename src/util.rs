@@ -500,8 +500,8 @@ pub(crate) fn average<'core>(
     dither: bool,
 ) -> Result<Node<'core>, Error> {
     if dither {
-        // dither_post(r_average_w(a, 0.5, b, 0.5, true)?, 7)
-        todo!()
+        // DitherPost(RAverageW(a, 0.5, b, 0.5, lsb_out=true)?, mode=7)
+        bail!("dither=true is not yet implemented");
     } else {
         average_frames(core, api, &[a, b], None)
     }

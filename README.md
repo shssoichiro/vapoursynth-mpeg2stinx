@@ -111,6 +111,8 @@ Contrasharpening scale.
 
 Default: `0`
 
+*Currently unimplemented, leave set to 0 for now*
+
 Whether to dither when averaging two clips.
 
 `mt_average` has a slight rounding bias which can be avoided
