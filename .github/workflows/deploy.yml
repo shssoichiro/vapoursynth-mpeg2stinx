@@ -64,7 +64,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
+            target: x86_64-unknown-linux-gnu
           - os: macos-latest
             target: x86_64-apple-darwin
 
@@ -81,18 +81,9 @@ jobs:
           target: ${{ matrix.target }}
           override: true
 
-      - name: Install musl
-        if: contains(matrix.target, 'linux-musl')
-        run: |
-          sudo apt-get install musl-tools
-
       - name: Build vapoursynth-mpeg2stinx
         run: |
           cargo build --release --target ${{ matrix.target }}
-
-      - name: Strip library
-        run: |
-          strip target/${{ matrix.target }}/release/vapoursynth-mpeg2stinx.so
 
       - name: Get the version
         id: tagName
