@@ -46,7 +46,7 @@ jobs:
           ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
           mv LICENSE LICENSE.txt
           7z a ${ARCHIVE_FILE} \
-               ./target/${{ matrix.conf }}-pc-windows-msvc/release/libvapoursynth_mpeg2stinx.dll \
+               ./target/${{ matrix.conf }}-pc-windows-msvc/release/vapoursynth-mpeg2stinx.dll \
                ./CHANGELOG.md ./LICENSE.txt ./README.md
           echo "::set-output name=file::${ARCHIVE_FILE}"
           echo "::set-output name=name::${ARCHIVE_NAME}.zip"
@@ -61,12 +61,10 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-          - os: macos-latest
-            target: x86_64-apple-darwin
 
     runs-on: ${{ matrix.os }}
 
