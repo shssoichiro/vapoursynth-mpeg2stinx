@@ -46,7 +46,7 @@ jobs:
           ARCHIVE_FILE="${ARCHIVE_NAME}.zip"
           mv LICENSE LICENSE.txt
           7z a ${ARCHIVE_FILE} \
-               ./target/${{ matrix.conf }}-pc-windows-msvc/release/vapoursynth-mpeg2stinx.dll \
+               ./target/${{ matrix.conf }}-pc-windows-msvc/release/libvapoursynth_mpeg2stinx.dll \
                ./CHANGELOG.md ./LICENSE.txt ./README.md
           echo "::set-output name=file::${ARCHIVE_FILE}"
           echo "::set-output name=name::${ARCHIVE_NAME}.zip"
@@ -99,7 +99,7 @@ jobs:
           ARCHIVE_FILE="${ARCHIVE_NAME}.tar.gz"
           mkdir "/tmp/${ARCHIVE_NAME}"
           cp README.md CHANGELOG.md LICENSE \
-             target/${{ matrix.target }}/release/vapoursynth-mpeg2stinx.so \
+             target/${{ matrix.target }}/release/libvapoursynth_mpeg2stinx.so \
              /tmp/${ARCHIVE_NAME}
           tar -czf ${PWD}/${ARCHIVE_FILE} -C /tmp/ ${ARCHIVE_NAME}
           echo ::set-output "name=file::${ARCHIVE_FILE}"
