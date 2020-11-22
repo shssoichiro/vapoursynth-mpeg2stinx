@@ -65,7 +65,9 @@ jobs:
         echo "$LinkPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Build
-      run: cargo build --all-features --tests --benches
+      run: |
+        cargo build --release
+        ls target/release
 
     - name: Run tests
       run: cargo test --all-features
