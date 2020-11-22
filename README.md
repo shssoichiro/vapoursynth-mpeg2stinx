@@ -2,6 +2,8 @@
 
 ## Installation
 
+Compiled libraries are available in the releases tab, for Windows and Linux.
+
 #### Arch Linux
 
 Probably there will be an AUR package for it soon. Until then, have Rust installed and then:
